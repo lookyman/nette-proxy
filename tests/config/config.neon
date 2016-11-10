@@ -1,0 +1,17 @@
+di:
+	debugger: off
+
+extensions:
+	console: Kdyby\Console\DI\ConsoleExtension
+	proxy: Lookyman\Nette\Proxy\DI\ProxyExtension
+
+proxy:
+	proxyDir: %appDir%/../temp/proxies
+
+services:
+	-
+		class: Lookyman\Nette\Proxy\Tests\Mock\Service1
+		tags: [lookyman.lazy]
+	-
+		implement: Lookyman\Nette\Proxy\Tests\Mock\IService2Factory
+		tags: [lookyman.lazy]
