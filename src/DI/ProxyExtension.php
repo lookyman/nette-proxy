@@ -25,12 +25,14 @@ class ProxyExtension extends CompilerExtension
 	 */
 	private $defaults = [
 		'proxyDir' => '%appDir%/../temp/proxies',
+		'default' => false,
 	];
 
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
+		Validators::assertField($config, 'default', 'bool');
 
 		// create proxy dir
 		Validators::assertField($config, 'proxyDir', 'string');
@@ -44,19 +46,22 @@ class ProxyExtension extends CompilerExtension
 		// generator strategy
 		$builder->addDefinition($this->prefix('generatorStrategy'))
 			->setClass(FileWriterGeneratorStrategy::class, [new Statement(FileLocator::class, [$config['proxyDir']])])
-			->setAutowired(false);
+			->setAutowired(false)
+			->addTag(self::TAG_LAZY, false);
 
 		// configuration
 		$builder->addDefinition($this->prefix('configuration'))
 			->setClass(Configuration::class)
 			->addSetup('setProxiesTargetDir', [$config['proxyDir']])
 			->addSetup('setGeneratorStrategy', [$this->prefix('@generatorStrategy')])
-			->setAutowired(false);
+			->setAutowired(false)
+			->addTag(self::TAG_LAZY, false);
 
 		// proxy factory
 		$builder->addDefinition($this->prefix('lazyLoadingValueHolderFactory'))
 			->setClass(LazyLoadingValueHolderFactory::class, [$this->prefix('@configuration')])
-			->setAutowired(false);
+			->setAutowired(false)
+			->addTag(self::TAG_LAZY, false);
 
 		// command
 		/** @var \Kdyby\Console\DI\ConsoleExtension $extension */
@@ -71,10 +76,15 @@ class ProxyExtension extends CompilerExtension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig();
 
 		// add service type as tag attribute
-		foreach (array_keys($builder->findByTag(self::TAG_LAZY)) as $name) {
+		foreach (array_keys($config['default'] ? $builder->getDefinitions() : $builder->findByTag(self::TAG_LAZY)) as $name) {
 			$def = $builder->getDefinition($name);
+			if ($def->getTag(self::TAG_LAZY) === false) {
+				$def->setTags(array_diff_key($def->getTags(), [self::TAG_LAZY => null]));
+				continue;
+			}
 			$def->addTag(self::TAG_LAZY, $def->getImplement() ?: $def->getClass());
 		}
 	}
