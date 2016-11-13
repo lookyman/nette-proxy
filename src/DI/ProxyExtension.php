@@ -28,6 +28,16 @@ class ProxyExtension extends CompilerExtension
 		'default' => false,
 	];
 
+	/**
+	 * @var array
+	 */
+	private $excluded = [
+		'Nette\ComponentModel\Component',
+		'Nette\Database\Connection',
+		'Nette\Http\Request',
+		'Nette\Security\User',
+	];
+
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
@@ -77,6 +87,14 @@ class ProxyExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig();
+
+		// do not proxy these services
+		// @see https://ocramius.github.io/ProxyManager/docs/lazy-loading-value-holder.html#known-limitations
+		foreach ($this->excluded as $type) {
+			foreach ($builder->findByType($type) as $def) {
+				$def->addTag(self::TAG_LAZY, false);
+			}
+		}
 
 		// add service type as tag attribute
 		foreach (array_keys($config['default'] ? $builder->getDefinitions() : $builder->findByTag(self::TAG_LAZY)) as $name) {
