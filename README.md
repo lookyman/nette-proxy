@@ -27,6 +27,7 @@ extensions:
 	
 proxy:
 	proxyDir: %appDir%/../temp/proxies # this is the default value
+	default: off # turn on to proxy everything
 ```
 
 ### Usage
@@ -39,6 +40,17 @@ services:
 		class: MyHeavyService
 		tags: [lookyman.lazy]
 ```
+
+If you have `proxy.default` turned on and you don't want a particular service to be proxied, you can do it like this:
+
+```neon
+services: 
+	-
+		class: DontProxyMeService
+		tags: [lookyman.lazy: off]
+```
+
+There is currently a known bug in that you cannot proxy the `http.request` service. Make sure to turn that off if you proxy everything by default.
 
 ### Pre-generating proxies
 
