@@ -14,6 +14,7 @@ class GenerateProxiesCommandTest extends \PHPUnit_Framework_TestCase
 	{
 		$tempDir = __DIR__ . '/../temp/Console';
 		Helpers::initTempDir($tempDir);
+		Helpers::initTempDir($tempDir . '/../proxies');
 
 		$container = (new Configurator())
 			->setTempDirectory($tempDir)
@@ -24,10 +25,14 @@ class GenerateProxiesCommandTest extends \PHPUnit_Framework_TestCase
 
 		/** @var Application $application */
 		$application = $container->getByType(Application::class);
-		$tester = new CommandTester($application->find('lookyman:nette-proxy:generate'));
-		$tester->execute(['command' => 'lookyman:nette-proxy:generate']);
+		$command = $application->find('lookyman:nette-proxy:generate');
+		$tester = new CommandTester($command);
+		$tester->execute([
+			'command' => $command->getName(),
+			'--debug' => null,
+		]);
 
-		self::assertFileExists(__DIR__ . '/../temp/proxies/ProxyManagerGeneratedProxy__PM__LookymanNetteProxyTestsMockIService2FactoryGeneratedee1449ea0da0fdbf038d28254e9c7b3f.php');
-		self::assertFileExists(__DIR__ . '/../temp/proxies/ProxyManagerGeneratedProxy__PM__LookymanNetteProxyTestsMockService1Generateda427b08305d9796d18525e91e7b08e56.php');
+		self::assertNotEquals('', $tester->getDisplay());
+		self::assertCount(2, new \FilesystemIterator($tempDir . '/../proxies', \FilesystemIterator::SKIP_DOTS));
 	}
 }
