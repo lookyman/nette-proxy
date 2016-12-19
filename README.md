@@ -21,7 +21,7 @@ composer require lookyman/nette-proxy
 
 ### Config
 
-```neon
+```yaml
 extensions: 
 	proxy: Lookyman\Nette\Proxy\DI\ProxyExtension
 	
@@ -34,7 +34,7 @@ proxy:
 
 Tag services with `lookyman.lazy` and they get magically proxied.
 
-```neon
+```yaml
 services: 
 	-
 		class: MyHeavyService
@@ -43,7 +43,7 @@ services:
 
 If you have `proxy.default` turned on and you don't want a particular service to be proxied, you can do it like this:
 
-```neon
+```yaml
 services: 
 	-
 		class: DontProxyMeService
