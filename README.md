@@ -50,7 +50,7 @@ services:
 		tags: [lookyman.lazy: off]
 ```
 
-There is currently a known bug in that you cannot proxy the `http.request` service. Make sure to turn that off if you proxy everything by default.
+Proxying certain Nette services is automaticaly disabled due to [known limitations](https://ocramius.github.io/ProxyManager/docs/lazy-loading-value-holder.html#known-limitations).
 
 ### Pre-generating proxies
 
