@@ -9,7 +9,7 @@ use Nette\DI\Container;
 use Nette\DI\Helpers;
 use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\Method;
+use Nette\PhpGenerator\Closure;
 use Nette\Utils\Validators;
 use ProxyManager\Configuration;
 use ProxyManager\Factory\LazyLoadingValueHolderFactory;
@@ -116,8 +116,8 @@ class ProxyExtension extends CompilerExtension
 			// modify original method body to return proxy instead
 			$method = $class->getMethod(Container::getMethodName($name));
 			$method->setBody(sprintf(
-				"return \$this->getService('%s')->createProxy(\n\t%s::class,\n\tfunction (&\$wrappedObject, \$proxy, \$method, \$parameters, &\$initializer) {\n\t\t\$wrappedObject = (%s)();\n\t\t\$initializer = null;\n\t}\n);",
-				$this->prefix('lazyLoadingValueHolderFactory'), $type, ltrim(preg_replace('#^#m', "\t\t", (new Method())->addBody($method->getBody())))
+				"return \$this->getService('%s')->createProxy(\n\t%s::class,\n\tfunction (&\$wrappedObject, \$proxy, \$method, \$parameters, &\$initializer) {\n\t\t\$wrappedObject = (%s)();\n\t\t\$initializer = null;\n\t\treturn true;\n\t}\n);",
+				$this->prefix('lazyLoadingValueHolderFactory'), $type, ltrim(preg_replace('#^#m', "\t\t", (new Closure())->addBody($method->getBody())))
 			));
 		}
 
