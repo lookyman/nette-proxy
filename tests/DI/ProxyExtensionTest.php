@@ -22,7 +22,6 @@ class ProxyExtensionTest extends \PHPUnit_Framework_TestCase
 			->setDebugMode(true)
 			->addConfig(__DIR__ . '/../config/config.neon')
 			->createContainer();
-		$container->initialize();
 
 		/** @var Service1 $service1 */
 		$service1 = $container->getByType(Service1::class);

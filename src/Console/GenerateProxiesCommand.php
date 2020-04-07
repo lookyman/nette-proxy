@@ -12,7 +12,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateProxiesCommand extends Command
 {
-	protected function configure()
+    /** @var Container */
+    private $container;
+
+    public function __construct(Container $container)
+    {
+        parent::__construct();
+        $this->container = $container;
+    }
+
+    protected function configure()
 	{
 		$this->setName('lookyman:nette-proxy:generate')
 			->setDescription('Generate proxies for lazy services')
@@ -23,13 +32,13 @@ class GenerateProxiesCommand extends Command
 	{
 		$debug = $input->getOption('debug');
 
-		/** @var Container $container */
-		$container = $this->getHelper('container')->getContainer();
-		foreach (array_keys($container->findByTag(ProxyExtension::TAG_LAZY)) as $name) {
-			$container->getService($name);
+		foreach (array_keys($this->container->findByTag(ProxyExtension::TAG_LAZY)) as $name) {
+			$this->container->getService($name);
 			if ($debug) {
 				$output->writeln(sprintf('Proxy for service %s generated', $name));
 			}
 		}
+
+		return 0;
 	}
 }

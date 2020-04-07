@@ -6,8 +6,8 @@ namespace Lookyman\Nette\Proxy\DI;
 use Lookyman\Nette\Proxy\Console\GenerateProxiesCommand;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Container;
+use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
-use Nette\DI\Statement;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Closure;
 use Nette\Utils\Validators;
@@ -55,13 +55,13 @@ class ProxyExtension extends CompilerExtension
 
 		// generator strategy
 		$builder->addDefinition($this->prefix('generatorStrategy'))
-			->setClass(FileWriterGeneratorStrategy::class, [new Statement(FileLocator::class, [$config['proxyDir']])])
+			->setFactory(FileWriterGeneratorStrategy::class, [new Statement(FileLocator::class, [$config['proxyDir']])])
 			->setAutowired(false)
 			->addTag(self::TAG_LAZY, false);
 
 		// configuration
 		$builder->addDefinition($this->prefix('configuration'))
-			->setClass(Configuration::class)
+			->setFactory(Configuration::class)
 			->addSetup('setProxiesTargetDir', [$config['proxyDir']])
 			->addSetup('setGeneratorStrategy', [$this->prefix('@generatorStrategy')])
 			->setAutowired(false)
@@ -69,18 +69,12 @@ class ProxyExtension extends CompilerExtension
 
 		// proxy factory
 		$builder->addDefinition($this->prefix('lazyLoadingValueHolderFactory'))
-			->setClass(LazyLoadingValueHolderFactory::class, [$this->prefix('@configuration')])
+			->setFactory(LazyLoadingValueHolderFactory::class, [$this->prefix('@configuration')])
 			->setAutowired(false)
 			->addTag(self::TAG_LAZY, false);
 
-		// command
-		/** @var \Kdyby\Console\DI\ConsoleExtension $extension */
-		foreach ($this->compiler->getExtensions('Kdyby\Console\DI\ConsoleExtension') as $extension) {
-			$builder->addDefinition($this->prefix('generateProxiesCommand'))
-				->setClass(GenerateProxiesCommand::class)
-				->addTag($extension::TAG_COMMAND);
-			break;
-		}
+        $builder->addDefinition($this->prefix('generateProxiesCommand'))
+            ->setFactory(GenerateProxiesCommand::class);
 	}
 
 	public function beforeCompile()

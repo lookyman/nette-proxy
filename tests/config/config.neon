@@ -1,8 +1,7 @@
 di:
-	debugger: off
+	debugger: false
 
 extensions:
-	console: Kdyby\Console\DI\ConsoleExtension
 	proxy: Lookyman\Nette\Proxy\DI\ProxyExtension
 
 proxy:

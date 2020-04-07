@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Lookyman\Nette\Proxy\Tests\Console;
 
-use Kdyby\Console\Application;
+use Lookyman\Nette\Proxy\Console\GenerateProxiesCommand;
 use Lookyman\Nette\Proxy\Tests\Helpers;
 use Nette\Configurator;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateProxiesCommandTest extends \PHPUnit_Framework_TestCase
@@ -23,9 +24,11 @@ class GenerateProxiesCommandTest extends \PHPUnit_Framework_TestCase
 			->createContainer();
 		$container->initialize();
 
-		/** @var Application $application */
-		$application = $container->getByType(Application::class);
-		$command = $application->find('lookyman:nette-proxy:generate');
+		$command = $container->getByType(GenerateProxiesCommand::class);
+
+		$application = new Application();
+		$application->add($command);
+
 		$tester = new CommandTester($command);
 		$tester->execute([
 			'command' => $command->getName(),
