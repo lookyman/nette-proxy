@@ -54,7 +54,7 @@ Proxying certain Nette services is automaticaly disabled due to [known limitatio
 
 ### Pre-generating proxies
 
-Proxy generation causes I/O operations and uses a lot of reflection, so it is handy to have them pre-generated before the application starts. For this, install [Kdyby/Console](https://github.com/kdyby/console) and run:
+Proxy generation causes I/O operations and uses a lot of reflection, so it is handy to have them pre-generated before the application starts. For this, install Symfony/Console integration (such as [Contributte/Console](https://github.com/contributte/console)) and run:
 
 ```sh
 php www/index.php lookyman:nette-proxy:generate
