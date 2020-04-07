@@ -11,6 +11,7 @@
     }
   ],
   "require": {
+    "php": ">=7.1",
     "ocramius/proxy-manager": "^2.0",
     "nette/di": "^2.4",
     "nette/php-generator": "^2.6|^3.0"
