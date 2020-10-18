@@ -55,7 +55,7 @@ class ProxyExtension extends CompilerExtension
 
 		// generator strategy
 		$builder->addDefinition($this->prefix('generatorStrategy'))
-			->setClass(FileWriterGeneratorStrategy::class, [new Statement(FileLocator::class, [$config['proxyDir']])])
+			->setFactory(FileWriterGeneratorStrategy::class, [new Statement(FileLocator::class, [$config['proxyDir']])])
 			->setAutowired(false)
 			->addTag(self::TAG_LAZY, false);
 
@@ -69,7 +69,7 @@ class ProxyExtension extends CompilerExtension
 
 		// proxy factory
 		$builder->addDefinition($this->prefix('lazyLoadingValueHolderFactory'))
-			->setClass(LazyLoadingValueHolderFactory::class, [$this->prefix('@configuration')])
+			->setFactory(LazyLoadingValueHolderFactory::class, [$this->prefix('@configuration')])
 			->setAutowired(false)
 			->addTag(self::TAG_LAZY, false);
 
