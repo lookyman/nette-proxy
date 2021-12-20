@@ -117,7 +117,7 @@ class ProxyExtension extends CompilerExtension
 			$method = $class->getMethod(Container::getMethodName($name));
 			$method->setBody(sprintf(
 				"return \$this->getService('%s')->createProxy(\n\t%s::class,\n\tfunction (&\$wrappedObject, \$proxy, \$method, \$parameters, &\$initializer) {\n\t\t\$wrappedObject = (%s)();\n\t\t\$initializer = null;\n\t\treturn true;\n\t}\n);",
-				$this->prefix('lazyLoadingValueHolderFactory'), $type, ltrim(preg_replace('#^#m', "\t\t", (new Closure())->addBody($method->getBody())))
+				$this->prefix('lazyLoadingValueHolderFactory'), $type, ltrim(preg_replace('#^#m', "\t\t", (string) (new Closure())->addBody($method->getBody())))
 			));
 		}
 
